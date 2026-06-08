@@ -1,0 +1,48 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Dark, moody gradient for the background/ellipse -->
+    <linearGradient id="bgGradient" x1="128" y1="0" x2="128" y2="256" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2c3e50"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    
+    <!-- Vibrant gradient for the bat symbol (Red to Black) -->
+    <linearGradient id="batGradient" x1="128" y1="60" x2="128" y2="196" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ef4444"/> <!-- Red-500 -->
+      <stop offset="50%" stop-color="#b91c1c"/> <!-- Red-700 -->
+      <stop offset="100%" stop-color="#000000"/> <!-- Black -->
+    </linearGradient>
+
+    <!-- Glow effect -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Ellipse (optional, can be transparent) -->
+  <!-- <ellipse cx="128" cy="128" rx="120" ry="100" fill="url(#bgGradient)" /> -->
+
+  <!-- Batman Logo Shape -->
+  <path d="M128,60 
+           C128,60 145,90 155,90 
+           C165,90 175,80 175,80
+           C175,80 220,130 220,130
+           C220,130 200,140 190,140
+           C180,140 170,135 170,135
+           C170,135 180,180 180,180
+           C180,180 150,196 128,196
+           C106,196 76,180 76,180
+           C76,180 86,135 86,135
+           C86,135 76,140 66,140
+           C56,140 36,130 36,130
+           C36,130 81,80 81,80
+           C81,80 91,90 101,90
+           C111,90 128,60 128,60 Z" 
+        fill="url(#batGradient)" 
+        stroke="white" stroke-width="2" stroke-opacity="0.2"
+        filter="url(#glow)"/>
+</svg>
