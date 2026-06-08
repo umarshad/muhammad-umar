@@ -587,6 +587,29 @@ const STATS = [
   { value: "4", label: "Companies" },
 ];
 
+// Profile avatar inside a gradient ring — reused for navbar, splash & footer
+const Avatar = ({
+  className = "w-8 h-8",
+  rounded = "rounded-lg",
+  glow = false,
+}: {
+  className?: string;
+  rounded?: string;
+  glow?: boolean;
+}) => (
+  <span
+    className={`${className} ${rounded} p-[2px] bg-gradient-to-br from-cyan-400 via-sky-400 to-violet-500 flex items-center justify-center overflow-hidden shrink-0 ${
+      glow ? "shadow-[0_0_30px_rgba(34,211,238,0.4)]" : ""
+    }`}
+  >
+    <img
+      src="/profile.jpg"
+      alt="Muhammad Umar"
+      className={`w-full h-full object-cover ${rounded}`}
+    />
+  </span>
+);
+
 const WhatsAppIcon = ({ className = "w-5 h-5" }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.488" />
@@ -913,12 +936,14 @@ function App() {
           >
             <div className="text-center px-6">
               <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.6 }}
-                className="mx-auto mb-6 w-20 h-20 rounded-2xl border border-cyan-400/30 bg-white/5 flex items-center justify-center font-heading text-3xl font-bold gradient-text"
+                initial={{ scale: 0.7, opacity: 0, rotate: -8 }}
+                animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+                className="relative mx-auto mb-6 w-24 h-24"
               >
-                MU
+                {/* Spinning gradient halo */}
+                <span className="absolute -inset-2 rounded-full bg-[conic-gradient(from_0deg,#22d3ee,#a78bfa,#22d3ee)] blur-md opacity-60 animate-spin-slow" />
+                <Avatar className="relative w-24 h-24" rounded="rounded-2xl" glow />
               </motion.div>
               <div className="font-mono text-sm text-cyan-300 mb-4">
                 <span className="text-violet-400">$</span> initializing portfolio
@@ -943,15 +968,21 @@ function App() {
       {/* ---------------- Navbar ---------------- */}
       <header className="fixed top-0 left-0 right-0 z-50">
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-3">
-          <div className="glass rounded-2xl px-4 sm:px-5 py-3 flex items-center justify-between">
+          <div className="glass rounded-2xl px-4 sm:px-5 py-3 flex items-center justify-between relative">
             <button
               onClick={() => scrollToSection("home")}
-              className="flex items-center gap-2 font-heading font-bold text-lg"
+              className="flex items-center gap-2 font-heading font-bold text-lg z-10 group"
             >
-              <span className="w-8 h-8 rounded-lg border border-cyan-400/40 bg-white/5 flex items-center justify-center text-sm gradient-text">
-                MU
-              </span>
-              <span className="hidden sm:inline">Muhammad Umar</span>
+              <Avatar className="w-9 h-9 transition-transform group-hover:scale-110" />
+              <span className="hidden lg:inline">Muhammad Umar</span>
+            </button>
+
+            {/* Centered name on mobile / tablet */}
+            <button
+              onClick={() => scrollToSection("home")}
+              className="lg:hidden absolute left-1/2 -translate-x-1/2 font-heading font-bold text-base sm:text-lg gradient-text whitespace-nowrap"
+            >
+              Muhammad Umar
             </button>
 
             <div className="hidden lg:flex items-center gap-1">
@@ -959,7 +990,7 @@ function App() {
                 <button
                   key={item}
                   onClick={() => scrollToSection(item)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium capitalize transition-all duration-300 hover:-translate-y-0.5 ${
                     activeSection === item
                       ? "text-cyan-300 bg-cyan-500/10"
                       : "text-slate-300 hover:text-white hover:bg-white/5"
@@ -970,15 +1001,19 @@ function App() {
               ))}
             </div>
 
-            <div className="flex items-center gap-2">
-              <a
+            <div className="flex items-center gap-2 z-10">
+              <motion.a
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 href={RESUME_URL}
                 download
+                target="_blank"
+                rel="noopener"
                 className="hidden sm:inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-cyan-500 to-violet-500 text-[#04060d] hover:shadow-[0_0_24px_rgba(34,211,238,0.4)] transition-shadow"
               >
                 <Download className="w-4 h-4" />
                 Resume
-              </a>
+              </motion.a>
               <button
                 onClick={() => setIsMenuOpen((o) => !o)}
                 className="lg:hidden p-2 rounded-lg bg-white/5 border border-white/10"
@@ -998,9 +1033,12 @@ function App() {
                 exit={{ opacity: 0, y: -10 }}
                 className="lg:hidden glass rounded-2xl mt-2 p-3 grid grid-cols-2 gap-2"
               >
-                {NAV_ITEMS.map((item) => (
-                  <button
+                {NAV_ITEMS.map((item, i) => (
+                  <motion.button
                     key={item}
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
                     onClick={() => scrollToSection(item)}
                     className={`py-2 px-3 rounded-lg text-sm font-medium capitalize transition-colors ${
                       activeSection === item
@@ -1009,11 +1047,13 @@ function App() {
                     }`}
                   >
                     {item}
-                  </button>
+                  </motion.button>
                 ))}
                 <a
                   href={RESUME_URL}
                   download
+                  target="_blank"
+                  rel="noopener"
                   className="col-span-2 mt-1 inline-flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-semibold bg-gradient-to-r from-cyan-500 to-violet-500 text-[#04060d]"
                 >
                   <Download className="w-4 h-4" />
@@ -1036,11 +1076,13 @@ function App() {
               transition={{ duration: 0.7, delay: 0.2 }}
             >
               {/* Mobile-only avatar */}
-              <div className="md:hidden mb-6">
-                <div className="w-24 h-24 rounded-2xl p-[2px] bg-gradient-to-br from-cyan-400 to-violet-500 shadow-[0_0_30px_rgba(34,211,238,0.3)]">
-                  <img src="/profile.jpg" alt="Muhammad Umar" className="w-full h-full object-cover rounded-2xl" />
-                </div>
-              </div>
+              <motion.div
+                className="md:hidden mb-6"
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <Avatar className="w-24 h-24" rounded="rounded-2xl" glow />
+              </motion.div>
 
               <div className="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-white/10 bg-white/5 font-mono text-xs text-cyan-300">
                 <span className="relative flex h-2 w-2">
@@ -1073,25 +1115,33 @@ function App() {
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mb-8">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => scrollToSection("projects")}
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-violet-500 text-[#04060d] hover:shadow-[0_0_28px_rgba(34,211,238,0.45)] transition-shadow"
+                  className="group inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold bg-gradient-to-r from-cyan-500 to-violet-500 text-[#04060d] shadow-lg shadow-cyan-500/20 hover:shadow-[0_0_28px_rgba(34,211,238,0.5)] transition-shadow"
                 >
-                  View Work <ArrowRight className="w-4 h-4" />
-                </button>
-                <a
+                  View Work <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </motion.button>
+                <motion.a
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.96 }}
                   href={RESUME_URL}
                   download
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold border border-white/15 bg-white/5 hover:bg-white/10 transition-colors"
+                  target="_blank"
+                  rel="noopener"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold border border-white/15 bg-white/5 hover:bg-white/10 hover:border-cyan-400/40 transition-colors"
                 >
                   <Download className="w-4 h-4" /> Download Resume
-                </a>
-                <button
+                </motion.a>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => scrollToSection("contact")}
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold text-slate-300 hover:text-white transition-colors"
                 >
                   <Mail className="w-4 h-4" /> Get in touch
-                </button>
+                </motion.button>
               </div>
 
               {/* Socials + contact */}
@@ -1130,17 +1180,15 @@ function App() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="relative hidden md:block"
+              className="relative mt-4 md:mt-0"
             >
               <TiltCard intensity={10} className="relative">
-                {/* Avatar ring */}
+                {/* Avatar ring — floats over the terminal on md+ (mobile already shows one up top) */}
                 <div
-                  className="absolute -top-10 -right-4 z-20 animate-float"
+                  className="hidden md:block absolute -top-10 -right-4 z-20 animate-float"
                   style={{ transform: "translateZ(60px)" }}
                 >
-                  <div className="w-28 h-28 rounded-2xl p-[2px] bg-gradient-to-br from-cyan-400 to-violet-500 shadow-[0_0_40px_rgba(34,211,238,0.35)]">
-                    <img src="/profile.jpg" alt="Muhammad Umar" className="w-full h-full object-cover rounded-2xl" />
-                  </div>
+                  <Avatar className="w-28 h-28" rounded="rounded-2xl" glow />
                 </div>
 
                 {/* Terminal window */}
@@ -1151,7 +1199,7 @@ function App() {
                     <span className="w-3 h-3 rounded-full bg-emerald-400/80" />
                     <span className="ml-2 font-mono text-xs text-slate-400">developer.ts</span>
                   </div>
-                  <div className="p-5 font-mono text-[13px] leading-relaxed">
+                  <div className="p-4 sm:p-5 font-mono text-xs sm:text-[13px] leading-relaxed">
                     <p><span className="text-violet-400">const</span> <span className="text-cyan-300">umar</span> = {"{"}</p>
                     <p className="pl-4"><span className="text-sky-300">role</span>: <span className="text-amber-300">"Flutter &amp; Full-Stack Dev"</span>,</p>
                     <p className="pl-4"><span className="text-sky-300">stack</span>: [<span className="text-emerald-300">"Flutter"</span>, <span className="text-emerald-300">"Firebase"</span>, <span className="text-emerald-300">"React"</span>],</p>
@@ -1717,7 +1765,9 @@ function App() {
                 <a
                   href={RESUME_URL}
                   download
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold border border-white/15 bg-white/5 hover:bg-white/10 transition-colors w-full justify-center"
+                  target="_blank"
+                  rel="noopener"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-xl font-semibold border border-white/15 bg-white/5 hover:bg-white/10 hover:border-cyan-400/40 hover:scale-[1.02] transition-all w-full justify-center"
                 >
                   <Download className="w-4 h-4" /> Download My Resume
                 </a>
@@ -1790,9 +1840,7 @@ function App() {
         <footer className="border-t border-white/5 py-10 px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 font-heading font-bold">
-              <span className="w-8 h-8 rounded-lg border border-cyan-400/40 bg-white/5 flex items-center justify-center text-sm gradient-text">
-                MU
-              </span>
+              <Avatar className="w-8 h-8" />
               Muhammad Umar
             </div>
             <p className="font-mono text-xs text-slate-500">

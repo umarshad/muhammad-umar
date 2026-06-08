@@ -29,9 +29,12 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2}"],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,woff2,pdf}"],
         navigateFallback: "/index.html",
-        navigateFallbackDenylist: [/^\/api\//],
+        // Never hand back index.html for the API or for direct file downloads
+        // (the resume PDF, images). Without this the SW intercepts the navigation
+        // to the PDF and serves the cached app shell instead of the actual file.
+        navigateFallbackDenylist: [/^\/api\//, /\.pdf$/i, /\.(png|jpe?g|svg|ico|webp)$/i],
       },
     }),
   ].filter(Boolean),
